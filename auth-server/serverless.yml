@@ -1,114 +1,146 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
+<!DOCTYPE html>
+<html lang="en">
 
-service: auth-server
-# app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Test Auth Server</title>
+</head>
 
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-frameworkVersion: "3"
+<body>
+    <style>
+        #container {
+            max-width: 500px;
+        }
 
-provider:
-  name: aws
-  runtime: nodejs18.x
+        h4 {
+            margin-top: 25px;
+        }
+    </style>
 
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
+    <main id="container">
+        <h1>OAuth2 Test</h1>
+        <h4><b>Step 1:</b> Get the OAuth URL</h4>
+        <p>Click the button below to get your OAuth URL.</p>
+        <button id="getAuthUrlButton">Get OAuth URL</button>
+        <p id="result"></p>
+        <a id="authURL" href="#" target="_blank">Click to authorize</a>
 
-# you can add statements to the Lambda function's IAM Role here
-#  iam:
-#    role:
-#      statements:
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:ListBucket"
-#          Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:PutObject"
-#          Resource:
-#            Fn::Join:
-#              - ""
-#              - - "arn:aws:s3:::"
-#                - "Ref" : "ServerlessDeploymentBucket"
-#                - "/*"
+        <!-- Step 2 -->
+        <h4>Step 2: Get your code and exchange for an access token</h4>
+        <p>After you're redirected back, copy the code from the URI.</p>
+        <label>Code input:
+            <input id="code" type="text" value="" />
+        </label>
+        <button id="getToken">Get Token</button>
+        <p id="accessToken"></p>
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+        <!-- Step 3 -->
+        <h4>Step 3: Get Calendar Events</h4>
+        <p>Click the button below to fetch your calendar events:</p>
+        <button id="getEvents">Get Calendar Events</button>
+        <pre id="events"></pre> <!-- This is where the events will be displayed -->
+    </main>
 
-# you can add packaging information here
-#package:
-#  patterns:
-#    - '!exclude-me.js'
-#    - '!exclude-me-dir/**'
-#    - include-me.js
-#    - include-me-dir/**
+    <script type="text/javascript">
+        // --------------------- STEP 1
+        const getAuthUrlButton = document.getElementById("getAuthUrlButton");
+        const resultElement = document.getElementById("result");
+        const resultLink = document.getElementById("authURL");
+        const getAuthURL =
+            "https://mq2upsbmw9.execute-api.us-west-2.amazonaws.com/dev/api/get-auth-url";
 
-functions:
-  hello:
-    handler: handler.hello
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
-#    events:
-#      - httpApi:
-#          path: /users/create
-#          method: get
-#      - websocket: $connect
-#      - s3: ${env:BUCKET}
-#      - schedule: rate(10 minutes)
-#      - sns: greeter-topic
-#      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
-#      - alexaSkill: amzn1.ask.skill.xx-xx-xx-xx
-#      - alexaSmartHome: amzn1.ask.skill.xx-xx-xx-xx
-#      - iot:
-#          sql: "SELECT * FROM 'some_topic'"
-#      - cloudwatchEvent:
-#          event:
-#            source:
-#              - "aws.ec2"
-#            detail-type:
-#              - "EC2 Instance State-change Notification"
-#            detail:
-#              state:
-#                - pending
-#      - cloudwatchLog: '/aws/lambda/hello'
-#      - cognitoUserPool:
-#          pool: MyUserPool
-#          trigger: PreSignUp
-#      - alb:
-#          listenerArn: arn:aws:elasticloadbalancing:us-east-1:XXXXXX:listener/app/my-load-balancer/50dc6c495c0c9188/
-#          priority: 1
-#          conditions:
-#            host: example.com
-#            path: /hello
+        getAuthUrlButton.onclick = function () {
+            fetch(getAuthURL)
+                .then(response => response.json())
+                .then(json => {
+                    const { authUrl } = json;
+                    resultElement.innerText = authUrl; // Display the auth URL for debugging
+                    resultLink.href = authUrl; // Set the link for authorization
+                })
+                .catch(error => {
+                    console.error('Error fetching auth URL:', error);
+                    resultElement.innerText = 'Error fetching auth URL.';
+                });
+        };
+        // --------------------- END OF STEP 1
 
-#    Define function environment variables here
-#    environment:
-#      variable2: value2
+        // --------------------- STEP 2
+        const codeValue = document.getElementById("code");
+        const getAccessToken = document.getElementById("getToken");
+        const accessTokenElement = document.getElementById("accessToken");
 
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+        getAccessToken.onclick = function () {
+            let code = codeValue.value.trim(); // Get the code from input
+
+            if (!code) {
+                accessTokenElement.innerText = 'Please provide a valid code.';
+                return;
+            }
+
+            // URL-encode the authorization code
+            code = encodeURIComponent(code);
+
+            // Fix: Use backticks for template literals
+            const getTokenRequest = `https://mq2upsbmw9.execute-api.us-west-2.amazonaws.com/dev/api/token/${code}`;
+
+            console.log('Requesting token with code:', code);
+
+            fetch(getTokenRequest)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error fetching access token: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    console.log('Token response:', json);
+                    accessTokenElement.innerText = JSON.stringify(json, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error fetching access token:', error);
+                    accessTokenElement.innerText = 'Error fetching access token.';
+                });
+        };
+        // --------------------- END OF STEP 2
+
+        // --------------------- STEP 3
+        const getEvents = document.getElementById("getEvents");
+        const events = document.getElementById("events");
+        const getCalendarEvents = "https://mq2upsbmw9.execute-api.us-west-2.amazonaws.com/dev/api/get-calendar-events";
+
+        getEvents.onclick = function () {
+            try {
+                // Parse the access token from the text element
+                const { access_token } = JSON.parse(accessTokenElement.innerText);
+
+                // Construct the event request URL with the access token
+                const eventRequest = `${getCalendarEvents}/${encodeURIComponent(access_token)}`;
+
+                // Fetch calendar events from the API
+                fetch(eventRequest)
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error("Error fetching calendar events: " + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(function (json) {
+                        // Display the events in the 'events' element
+                        events.innerText = JSON.stringify(json, null, 2);
+                    })
+                    .catch(function (error) {
+                        console.error("Error fetching calendar events:", error);
+                        events.innerText = "Failed to load events.";
+                    });
+            } catch (error) {
+                console.error("Error parsing access token:", error);
+                events.innerText = "Invalid access token.";
+            }
+        };
+        // -- END OF STEP 3
+    </script>
+</body>
+
+</html>
