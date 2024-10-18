@@ -6,9 +6,6 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Test Auth Server</title>
-</head>
-
-<body>
     <style>
         #container {
             max-width: 500px;
@@ -18,7 +15,9 @@
             margin-top: 25px;
         }
     </style>
+</head>
 
+<body>
     <main id="container">
         <h1>OAuth2 Test</h1>
         <h4><b>Step 1:</b> Get the OAuth URL</h4>
@@ -26,7 +25,6 @@
         <button id="getAuthUrlButton">Get OAuth URL</button>
         <p id="result"></p>
         <a id="authURL" href="#" target="_blank">Click to authorize</a>
-        <!-- STEP 2 -- MAKE SURE STEP 1 WORKS BEFORE MOVING ON-->
 
         <h4>Step 2: Get your code and exchange for an access token</h4>
         <p>
@@ -39,7 +37,12 @@
         </label>
         <button id="getToken">Get Token</button>
         <p id="accessToken"></p>
+
+        <h4>Step 3: Get Calendar Events</h4>
+        <button id="getEvents">Get Calendar Events</button>
+        <pre id="events"></pre>
     </main>
+
     <script type="text/javascript">
         // --------------------- STEP 1
         const getAuthUrlButton = document.getElementById("getAuthUrlButton");
@@ -48,9 +51,13 @@
         const getAuthURL =
             "https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/get-auth-url";
 
-        getAuthUrlButton.onclick = function () {
+        getAuthUrlButton.onclick = function (event) {
+            event.preventDefault();
             fetch(getAuthURL)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
                 .then(json => {
                     const { authUrl } = json;
                     resultElement.innerText = authUrl; // Display the auth URL for debugging
@@ -58,7 +65,7 @@
                 })
                 .catch(error => {
                     console.error('Error fetching auth URL:', error);
-                    resultElement.innerText = 'Error fetching auth URL.';
+                    resultElement.innerText = 'Error fetching auth URL: ' + error.message;
                 });
         };
         // --------------------- END OF STEP 1
@@ -67,35 +74,70 @@
         const codeValue = document.getElementById("code");
         const getAccessToken = document.getElementById("getToken");
         const accessTokenElement = document.getElementById("accessToken");
-        getAccessToken.onclick = function () {
-            let code = codeValue.value.trim(); // Get the code from input
+
+        getAccessToken.onclick = async function (event) {
+            event.preventDefault();
+            const code = codeValue.value.trim();
 
             if (!code) {
                 accessTokenElement.innerText = 'Please provide a valid code.';
                 return;
             }
 
-            // URL-encode the authorization code
-            code = encodeURIComponent(code);
+            const encodedCode = encodeURIComponent(code);
+            const getTokenRequest = `https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/token/${encodedCode}`;
 
-            // Construct the correct URL with the code dynamically inserted
-            const getTokenRequest = `https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/token/${code}`;
-
-            console.log('Requesting token with code:', code);
-
-            fetch(getTokenRequest)
-                .then(response => response.json())
-                .then(json => {
-                    console.log('Token response:', json);
-                    accessTokenElement.innerText = JSON.stringify(json, null, 2);
-                })
-                .catch(error => {
-                    console.error('Error fetching access token:', error);
-                    accessTokenElement.innerText = 'Error fetching access token.';
-                });
+            try {
+                const response = await fetch(getTokenRequest);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                if (data.access_token) {
+                    accessTokenElement.innerText = JSON.stringify({ access_token: data.access_token });
+                } else {
+                    accessTokenElement.innerText = 'Error: No access token returned.';
+                }
+            } catch (error) {
+                console.error('Error fetching access token:', error);
+                accessTokenElement.innerText = 'Error fetching access token: ' + error.message;
+            }
         };
         // --------------------- END OF STEP 2
+
+        // --------------------- STEP 3
+        const getEvents = document.getElementById("getEvents");
+        const eventsElement = document.getElementById("events");
+
+        getEvents.onclick = async function () {
+            try {
+                const accessTokenText = accessTokenElement.innerText;  // Ensure this element contains the access token in JSON format
+                const { access_token } = JSON.parse(accessTokenText);  // Parse to extract the access_token
+
+                const eventRequest = `https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/get-calendar-events/${access_token}`;
+
+                const response = await fetch(eventRequest);
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+                const formattedEvents = data.events.map(event =>
+                    `Event: ${event.summary}, Start: ${event.start.dateTime || event.start.date}`
+                ).join('\n');
+
+                eventsElement.innerText = formattedEvents;
+            } catch (error) {
+                console.error('Error fetching calendar events:', error);
+                eventsElement.innerText = 'Error fetching calendar events: ' + error.message;
+            }
+        };
+
+        // --------------------- END OF STEP 3
     </script>
+
 </body>
 
 </html>

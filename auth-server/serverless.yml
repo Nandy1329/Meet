@@ -8,6 +8,13 @@ provider:
   environment:
     CLIENT_ID: ${file(config.json):CLIENT_ID}
     CLIENT_SECRET: ${file(config.json):CLIENT_SECRET}
+    CALENDAR_ID: ${file(config.json):CALENDAR_ID}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:GetItem"
+      Resource: "arn:aws:dynamodb:us-west-2:your-account-id:table/your-table-name"
 
 functions:
   getAuthURL:
@@ -16,22 +23,20 @@ functions:
       - http:
           path: api/get-auth-url
           method: get
+          cors: true
+
   getAccessToken:
     handler: handler.getAccessToken
     events:
       - http:
           path: api/token/{code}
           method: get
+          cors: true
+
   getCalendarEvents:
     handler: handler.getCalendarEvents
     events:
       - http:
           path: api/get-calendar-events/{access_token}
           method: get
-
-resources:
-  Resources:
-    ApiGatewayRestApi:
-      Type: AWS::ApiGateway::RestApi
-      Properties:
-        Name: my-auth-service-api
+          cors: true
