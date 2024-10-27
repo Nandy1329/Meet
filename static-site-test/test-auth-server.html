@@ -6,6 +6,9 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Test Auth Server</title>
+</head>
+
+<body>
     <style>
         #container {
             max-width: 500px;
@@ -15,32 +18,29 @@
             margin-top: 25px;
         }
     </style>
-</head>
 
-<body>
     <main id="container">
         <h1>OAuth2 Test</h1>
+
         <h4><b>Step 1:</b> Get the OAuth URL</h4>
         <p>Click the button below to get your OAuth URL.</p>
         <button id="getAuthUrlButton">Get OAuth URL</button>
         <p id="result"></p>
         <a id="authURL" href="#" target="_blank">Click to authorize</a>
 
-        <h4>Step 2: Get your code and exchange for an access token</h4>
-        <p>
-            After you’re redirected back to your Meet app on GitHub, copy the code
-            from the URI.
-        </p>
-        <br />
-        <label>Code input
+        <h4><b>Step 2:</b> Get your code and exchange for an access token</h4>
+        <p>After you’re redirected back to your Meet app on GitHub, copy the code from the URI.</p>
+        <label>
+            Code input
             <input id="code" type="text" value="" />
         </label>
         <button id="getToken">Get Token</button>
         <p id="accessToken"></p>
 
-        <h4>Step 3: Get Calendar Events</h4>
-        <button id="getEvents">Get Calendar Events</button>
-        <pre id="events"></pre>
+        <!-- STEP 3: Get calendar events -->
+        <h4><b>Step 3:</b> Get the calendar events using your access token</h4>
+        <button id="getEvents">Get Events</button>
+        <p id="events"></p>
     </main>
 
     <script type="text/javascript">
@@ -48,24 +48,20 @@
         const getAuthUrlButton = document.getElementById("getAuthUrlButton");
         const resultElement = document.getElementById("result");
         const resultLink = document.getElementById("authURL");
-        const getAuthURL =
-            "https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/get-auth-url";
 
-        getAuthUrlButton.onclick = function (event) {
-            event.preventDefault();
+        const getAuthURL = "https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/get-auth-url";
+
+        getAuthUrlButton.onclick = function () {
             fetch(getAuthURL)
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
-                .then(json => {
+                .then((response) => response.json())
+                .then((json) => {
                     const { authUrl } = json;
-                    resultElement.innerText = authUrl; // Display the auth URL for debugging
-                    resultLink.href = authUrl; // Set the link for authorization
+                    resultElement.innerText = "OAuth URL retrieved successfully!";
+                    resultLink.href = authUrl;
+                    resultLink.innerText = "Click here to authorize";
                 })
-                .catch(error => {
-                    console.error('Error fetching auth URL:', error);
-                    resultElement.innerText = 'Error fetching auth URL: ' + error.message;
+                .catch((error) => {
+                    resultElement.innerText = "Error fetching OAuth URL: " + error;
                 });
         };
         // --------------------- END OF STEP 1
@@ -75,69 +71,43 @@
         const getAccessToken = document.getElementById("getToken");
         const accessTokenElement = document.getElementById("accessToken");
 
-        getAccessToken.onclick = async function (event) {
-            event.preventDefault();
-            const code = codeValue.value.trim();
+        const getTokenURL = "https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/token/";
 
-            if (!code) {
-                accessTokenElement.innerText = 'Please provide a valid code.';
-                return;
-            }
+        getAccessToken.onclick = function () {
+            let code = codeValue.value;
+            code = encodeURIComponent(code);
 
-            const encodedCode = encodeURIComponent(code);
-            const getTokenRequest = `https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/token/${encodedCode}`;
-
-            try {
-                const response = await fetch(getTokenRequest);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                if (data.access_token) {
-                    accessTokenElement.innerText = JSON.stringify({ access_token: data.access_token });
-                } else {
-                    accessTokenElement.innerText = 'Error: No access token returned.';
-                }
-            } catch (error) {
-                console.error('Error fetching access token:', error);
-                accessTokenElement.innerText = 'Error fetching access token: ' + error.message;
-            }
+            fetch(getTokenURL + code)
+                .then((response) => response.json())
+                .then((json) => {
+                    accessTokenElement.innerText = JSON.stringify(json);
+                })
+                .catch((error) => {
+                    accessTokenElement.innerText = "Error fetching access token: " + error;
+                });
         };
         // --------------------- END OF STEP 2
 
         // --------------------- STEP 3
-        const getEvents = document.getElementById("getEvents");
+        const getEventsButton = document.getElementById("getEvents");
         const eventsElement = document.getElementById("events");
+        const getCalendarEventsURL = "https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/get-events";
 
-        getEvents.onclick = async function () {
-            try {
-                const accessTokenText = accessTokenElement.innerText;  // Ensure this element contains the access token in JSON format
-                const { access_token } = JSON.parse(accessTokenText);  // Parse to extract the access_token
+        getEventsButton.onclick = function () {
+            const { access_token } = JSON.parse(accessTokenElement.innerText);
+            const eventRequest = `${getCalendarEventsURL}/${access_token}`;
 
-                const eventRequest = `https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/get-calendar-events/${access_token}`;
-
-                const response = await fetch(eventRequest);
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const data = await response.json();
-
-                const formattedEvents = data.events.map(event =>
-                    `Event: ${event.summary}, Start: ${event.start.dateTime || event.start.date}`
-                ).join('\n');
-
-                eventsElement.innerText = formattedEvents;
-            } catch (error) {
-                console.error('Error fetching calendar events:', error);
-                eventsElement.innerText = 'Error fetching calendar events: ' + error.message;
-            }
+            fetch(eventRequest)
+                .then((response) => response.json())
+                .then((json) => {
+                    eventsElement.innerText = JSON.stringify(json, null, 2);
+                })
+                .catch((error) => {
+                    eventsElement.innerText = "Error fetching events: " + error;
+                });
         };
-
         // --------------------- END OF STEP 3
     </script>
-
 </body>
 
 </html>
