@@ -44,27 +44,31 @@
     </main>
 
     <script type="text/javascript">
+
+
         // --------------------- STEP 1
         const getAuthUrlButton = document.getElementById("getAuthUrlButton");
         const resultElement = document.getElementById("result");
         const resultLink = document.getElementById("authURL");
 
+        // Replace this with your own endpoint
         const getAuthURL = "https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/get-auth-url";
 
         getAuthUrlButton.onclick = function () {
             fetch(getAuthURL)
-                .then((response) => response.json())
-                .then((json) => {
+                .then(response => response.json())
+                .then(json => {
                     const { authUrl } = json;
-                    resultElement.innerText = "OAuth URL retrieved successfully!";
+                    resultElement.innerHTML = "OAuth URL retrieved successfully!<br>";
                     resultLink.href = authUrl;
-                    resultLink.innerText = "Click here to authorize";
+                    resultLink.innerText = authUrl; // Display the actual OAuth URL
                 })
-                .catch((error) => {
+                .catch(error => {
                     resultElement.innerText = "Error fetching OAuth URL: " + error;
                 });
         };
         // --------------------- END OF STEP 1
+
 
         // --------------------- STEP 2
         const codeValue = document.getElementById("code");
@@ -78,14 +82,23 @@
             code = encodeURIComponent(code);
 
             fetch(getTokenURL + code)
-                .then((response) => response.json())
-                .then((json) => {
-                    accessTokenElement.innerText = JSON.stringify(json);
+                .then(response => response.json())
+                .then(json => {
+                    console.log("Token JSON response:", json); // Log the entire token response
+                    if (json && json.access_token) {
+                        accessTokenElement.innerText = JSON.stringify(json);
+                        console.log("Access token set:", accessTokenElement.innerText);
+                    } else {
+                        console.error("Token not found in JSON response.");
+                        accessTokenElement.innerText = "Error: Token not found in response.";
+                    }
                 })
-                .catch((error) => {
+                .catch(error => {
+                    console.error("Error fetching access token:", error);
                     accessTokenElement.innerText = "Error fetching access token: " + error;
                 });
         };
+
         // --------------------- END OF STEP 2
 
         // --------------------- STEP 3
@@ -94,19 +107,37 @@
         const getCalendarEventsURL = "https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/get-events";
 
         getEventsButton.onclick = function () {
-            const { access_token } = JSON.parse(accessTokenElement.innerText);
-            const eventRequest = `${getCalendarEventsURL}/${access_token}`;
+            try {
+                const accessTokenData = JSON.parse(accessTokenElement.innerText);
+                const access_token = accessTokenData.access_token; // Extract token here
 
-            fetch(eventRequest)
-                .then((response) => response.json())
-                .then((json) => {
-                    eventsElement.innerText = JSON.stringify(json, null, 2);
-                })
-                .catch((error) => {
-                    eventsElement.innerText = "Error fetching events: " + error;
-                });
+                console.log("Access token parsed:", access_token);
+
+                if (!access_token) {
+                    console.error("Access token is undefined or empty.");
+                    eventsElement.innerText = "Error: Access token is missing.";
+                    return;
+                }
+
+                const eventRequest = `${getCalendarEventsURL}/${access_token}`;
+                fetch(eventRequest)
+                    .then((response) => response.json())
+                    .then((json) => {
+                        console.log("Calendar events JSON response:", json);
+                        eventsElement.innerText = JSON.stringify(json, null, 2);
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching events:", error);
+                        eventsElement.innerText = "Error fetching events: " + error;
+                    });
+            } catch (e) {
+                console.error("Error parsing access token:", e);
+                eventsElement.innerText = "Error: Unable to parse access token.";
+            }
         };
+
         // --------------------- END OF STEP 3
+
     </script>
 </body>
 
