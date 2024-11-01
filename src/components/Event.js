@@ -1,9 +1,10 @@
 // src/components/Event.js
 
-const Event = () => {
-    return (
-      <li></li>
-    );
-  }
+import React from "react";
+const Event = ({event}) => {
+  return (
+    <li>{event.location}</li>
+  );
+}
   
   export default Event;
