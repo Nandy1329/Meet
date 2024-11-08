@@ -1,4 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:500);
+
 .App {
   text-align: center;
   padding: 2% 5%;
@@ -75,14 +76,45 @@ input[type="number"] {
   border: 1px solid #ccc;
   border-radius: 4px;
   position: relative;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.details-btn {
-  position: absolute;
-  right: 5px;
-  bottom: 5px;
-  padding: 5px 8px;
+.eventSummary {
+  margin-bottom: 10px;
+}
+
+.eventSummary h2 {
+  margin: 0;
+  font-size: 1.5em;
+  color: #333;
+}
+
+.eventSummary p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.eventDetails {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ccc;
+}
+
+.show-details-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 10px;
   border-radius: 4px;
   outline: none;
   cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.show-details-btn:hover {
+  background-color: #0056b3;
 }

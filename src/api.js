@@ -32,7 +32,7 @@ const removeQuery = () => {
 
 const checkToken = async (accessToken) => {
   const response = await fetch(
-    `https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/check-token/${accessToken}`
+    `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${accessToken}`
   );
   const results = await response.json();
   return results;
