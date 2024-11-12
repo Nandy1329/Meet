@@ -49,6 +49,8 @@
     "last 1 safari version"
   ],
   "devDependencies": {
-    "gh-pages": "^6.2.0"
+    "gh-pages": "^6.2.0",
+    "jest-cucumber": "^4.5.0",
+    "puppeteer": "^23.7.1"
   }
 }
