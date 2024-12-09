@@ -31,7 +31,7 @@ const CitySearch = ({ allLocations, setCurrentCity }) => {
     <div id="city-search">
       <input
         type="text"
-        className="city"
+        className="input-field"
         placeholder="Search for a city"
         value={query}
         onFocus={() => setShowSuggestions(true)}

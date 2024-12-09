@@ -1,36 +1,32 @@
-import { useState } from "react"
-import PropTypes from 'prop-types'
-
+// src/components/Event.js
+import React from "react";
+import { useState } from "react";
 
 const Event = ({ event }) => {
-  const [showDetails, setShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(false);
+
   return (
-    <li className='event'>
-      <span className='eventSummary'>
+    <li>
+      <div className="event">
         <h2>{event.summary}</h2>
-        <p className="location">{event.location}</p>
-        <p className="originalStartTime">{event && (new Date(event.originalStartTime.dateTime)).toUTCString()}</p>
-      </span>
-      {showDetails ? (
-        <div className='details' id="details" >
-          <p>{event.description}</p>
-          <a href={event.htmlLink}>See details on Google Calendar</a>
-        </div> 
-      ) : null}
-      <button 
-        id="show-details-btn"
-        className='details-btn'
-        name="Show Details" 
-        onClick={() => setShowDetails(!showDetails)}
-      >
-        {showDetails ? 'Hide Details' : 'Show Details'}
-      </button>
+        <p><strong>{event.created}</strong></p>
+        <p>{event.location}</p>
+        
+        {showDetails ? (
+          <div className="event-details">
+            <p>{event.description}</p>
+            <a href={event.htmlLink} target="_blank" rel="noreferrer" className="btn-to-calendar link-to-calendar">
+              See on Google Calendar
+            </a>
+          </div>
+        ) : null}
+        
+        <button className="show-details-btn" onClick={() => setShowDetails(!showDetails)}>
+          {showDetails ? "Hide Details" : "Show Details"}
+        </button>
+      </div>
     </li>
-  )
-}
+  );
+};
 
 export default Event;
-
-Event.propTypes = {
-  event: PropTypes.object.isRequired
-}

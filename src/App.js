@@ -1,9 +1,9 @@
-import './App.css';
-import EventList from './components/EventList';
+import React, { useState, useEffect } from 'react';
 import CitySearch from './components/CitySearch';
+import EventList from './components/EventList';
 import NumberOfEvents from './components/NumberOfEvents';
-import { useEffect, useState } from 'react';
 import { extractLocations, getEvents } from './api';
+import './App.css';
 
 const App = () => {
   const [events, setEvents] = useState([]);
@@ -30,6 +30,7 @@ const App = () => {
         allLocations={allLocations}
         setCurrentCity={setCurrentCity}
       />
+      {errorAlert && <div className="error-alert">{errorAlert}</div>}
       <NumberOfEvents
         setErrorAlert={setErrorAlert}
         currentNOE={currentNOE}
