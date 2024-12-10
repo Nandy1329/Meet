@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 // src/__tests__/NumberOfEvents.test.js
 import React from 'react';
 import { render, screen } from '@testing-library/react';
@@ -13,6 +12,15 @@ describe('<NumberOfEvents /> Component', () => {
     // Mock the functions to test their behavior
     setCurrentNOE = jest.fn();
     setErrorAlert = jest.fn();
+
+    // Render the component
+    // eslint-disable-next-line testing-library/no-render-in-setup
+    render(
+      <NumberOfEvents
+        setCurrentNOE={setCurrentNOE}
+        setErrorAlert={setErrorAlert}
+      />
+    );
   });
 
   test('component contains an input textbox', () => {
@@ -24,13 +32,7 @@ describe('<NumberOfEvents /> Component', () => {
     const input = screen.getByRole('spinbutton');
     expect(input).toHaveValue(32);
   });
-    render(
-      <NumberOfEvents
-        setCurrentNOE={setCurrentNOE}
-        setErrorAlert={setErrorAlert}
-      />
-    );
-    const input = screen.getByRole('spinbutton');
+
   test('textbox value changes when user updates input', async () => {
     const input = screen.getByRole('spinbutton');
     const user = userEvent.setup();

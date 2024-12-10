@@ -6,9 +6,9 @@ Feature: SpecifyNumberOfEvents
     Then the app should display 32 events by default.
 
   Scenario: User can change the number of events displayed
-    Given the main page is open
-    When the user specifies a number in the "number of events" input field
-    Then the app should update to show that number of events.
+     Given the user is viewing the event list
+    When the user changes the number of events to display to 10
+    Then the event list should display 10 events
 
   Scenario: User enters an invalid number of events
     Given the main page is open
