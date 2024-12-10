@@ -1,22 +1,37 @@
-import { render, within, waitFor } from '@testing-library/react';
+// src/__tests__/App.test.js
+
+import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 
-test('renders NumberOfEvents', async () => {
-  const { findByTestId } = render(<App />);
+describe('<App /> component', () => {
+  let AppDOM;
 
-  await waitFor(() => {
-    const numberOfEventsElement = findByTestId('number-of-events');
+  beforeEach(() => {
+    AppDOM = render(<App />).container.firstChild;
+  });
+
+  test('renders list of events', () => {
+    expect(AppDOM.querySelector('#event-list')).toBeInTheDocument();
+  });
+
+  test('renders CitySearch', async () => {
+    const { findByTestId } = render(<App />);
+    const citySearchElement = await findByTestId('city-search');
+    expect(citySearchElement).toBeInTheDocument();
+  });
+
+  test('renders NumberOfEvents', async () => {
+    const { findByTestId } = render(<App />);
+    const numberOfEventsElement = await findByTestId('number-of-events');
     expect(numberOfEventsElement).toBeInTheDocument();
   });
 });
 
-test('renders a list of events matching the city selected by the user', async () => {
-  const { container } = render(<App />);
-  const user = userEvent.setup();
-
-  const CitySearchDOM = container.querySelector('#city-search');
-  expect(CitySearchDOM).not.toBeNull();
+  test('renders a list of events matching the city selected by the user', async () => {
+    const user = userEvent.setup();
+    const AppComponent = render(<App />);
+    const AppDOM = AppComponent.container.firstChild;
 
   const CitySearchInput = within(CitySearchDOM).queryByRole('textbox');
   expect(CitySearchInput).not.toBeNull();
@@ -26,32 +41,31 @@ test('renders a list of events matching the city selected by the user', async ()
   const berlinSuggestionItem = within(CitySearchDOM).queryByText('Berlin, Germany');
   await user.click(berlinSuggestionItem);
 
-  const EventListDOM = container.querySelector('.event-list');
-  await waitFor(() => {
-    const EventListItems = within(EventListDOM).queryAllByRole('listitem');
-    expect(EventListItems.length).toBeGreaterThan(0);
+    const EventListDOM = AppDOM.querySelector('#event-list');
+    const allRenderedEventItems = within(EventListDOM).queryAllByRole('listitem');
 
-    const allEventsMatchCity = EventListItems.every((event) =>
-      event.textContent.includes('Berlin')
-    );
-    expect(allEventsMatchCity).toBe(true);
+    const allEvents = await getEvents();
+    const berlinEvents = allEvents.filter(event => event.location === 'Berlin, Germany');
+    expect(allRenderedEventItems.length).toBe(berlinEvents.length);
+
+    allRenderedEventItems.forEach(event => {
+      expect(event.textContent).toContain("Berlin, Germany");
+    });
   });
-});
 
-test('updates the number of events displayed when the user changes the input', async () => {
-  const { container } = render(<App />);
-  const user = userEvent.setup();
+  test('updates the number of events displayed when the user changes the number of events input', async () => {
+    const user = userEvent.setup();
+    const AppComponent = render(<App />);
+    const AppDOM = AppComponent.container.firstChild;
 
-  const NumberOfEventsDOM = container.querySelector('#number-of-events');
-  expect(NumberOfEventsDOM).not.toBeNull();
+    const NumberOfEventsDOM = AppDOM.querySelector('#number-of-events');
+    const NumberOfEventsInput = within(NumberOfEventsDOM).queryByTestId('numberOfEventsInput');
 
-  const NumberOfEventsInput = within(NumberOfEventsDOM).queryByTestId('number-of-events');
-  await user.clear(NumberOfEventsInput);
-  await user.type(NumberOfEventsInput, '10');
+    await user.type(NumberOfEventsInput, '{backspace}{backspace}10');
 
-  const EventListDOM = container.querySelector('.event-list');
-  await waitFor(() => {
-    const EventListItems = within(EventListDOM).queryAllByRole('listitem');
-    expect(EventListItems.length).toBe(10);
+    const EventListDOM = AppDOM.querySelector('#event-list');
+    const allRenderedEventItems = within(EventListDOM).queryAllByRole('listitem');
+    expect(allRenderedEventItems.length).toBe(10);
   });
+
 });
