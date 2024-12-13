@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/Meet/static/css/main.b2116abd.css",
-    "main.js": "/Meet/static/js/main.430a137a.js",
-    "static/js/453.4a9980c6.chunk.js": "/Meet/static/js/453.4a9980c6.chunk.js",
-    "service-worker.js": "/Meet/service-worker.js",
-    "index.html": "/Meet/index.html",
-    "main.b2116abd.css.map": "/Meet/static/css/main.b2116abd.css.map",
-    "main.430a137a.js.map": "/Meet/static/js/main.430a137a.js.map",
-    "453.4a9980c6.chunk.js.map": "/Meet/static/js/453.4a9980c6.chunk.js.map"
+    "main.css": "/repository/static/css/main.b2116abd.css",
+    "main.js": "/repository/static/js/main.44af15c1.js",
+    "static/js/453.4a9980c6.chunk.js": "/repository/static/js/453.4a9980c6.chunk.js",
+    "service-worker.js": "/repository/service-worker.js",
+    "index.html": "/repository/index.html",
+    "main.b2116abd.css.map": "/repository/static/css/main.b2116abd.css.map",
+    "main.44af15c1.js.map": "/repository/static/js/main.44af15c1.js.map",
+    "453.4a9980c6.chunk.js.map": "/repository/static/js/453.4a9980c6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.b2116abd.css",
-    "static/js/main.430a137a.js"
+    "static/js/main.44af15c1.js"
   ]
 }
