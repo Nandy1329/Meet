@@ -12,7 +12,7 @@ const CitySearch = ({ allLocations, setCurrentCity }) => {
     const filteredLocations = allLocations ? allLocations.filter((location) => {
       return location.toUpperCase().indexOf(value.toUpperCase()) > -1;
     }) : [];
-    
+
     setQuery(value);
     setSuggestions(filteredLocations);
   };
@@ -26,15 +26,15 @@ const CitySearch = ({ allLocations, setCurrentCity }) => {
 
   useEffect(() => {
     setSuggestions(allLocations);
-  }, [`${allLocations}`]);
+  }, [allLocations]);
 
   return (
     <div id="city-search">
       <input
         type="text"
         className="input-field"
-                placeholder="Search for a city"
-        value={query}        
+        placeholder="Search for a city"
+        value={query}
         onFocus={() => setShowSuggestions(true)}
         onChange={handleInputChanged}
       />
@@ -52,5 +52,5 @@ const CitySearch = ({ allLocations, setCurrentCity }) => {
     </div>
   )
 }
- 
- export default CitySearch;
+
+export default CitySearch;
