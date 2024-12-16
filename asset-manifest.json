@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/repository/static/css/main.8d38dbfe.css",
-    "main.js": "/repository/static/js/main.0de747cc.js",
-    "static/js/453.4a9980c6.chunk.js": "/repository/static/js/453.4a9980c6.chunk.js",
-    "service-worker.js": "/repository/service-worker.js",
-    "index.html": "/repository/index.html",
-    "main.8d38dbfe.css.map": "/repository/static/css/main.8d38dbfe.css.map",
-    "main.0de747cc.js.map": "/repository/static/js/main.0de747cc.js.map",
-    "453.4a9980c6.chunk.js.map": "/repository/static/js/453.4a9980c6.chunk.js.map"
+    "main.css": "/Meet/static/css/main.8d38dbfe.css",
+    "main.js": "/Meet/static/js/main.da265191.js",
+    "static/js/453.4a9980c6.chunk.js": "/Meet/static/js/453.4a9980c6.chunk.js",
+    "service-worker.js": "/Meet/service-worker.js",
+    "index.html": "/Meet/index.html",
+    "main.8d38dbfe.css.map": "/Meet/static/css/main.8d38dbfe.css.map",
+    "main.da265191.js.map": "/Meet/static/js/main.da265191.js.map",
+    "453.4a9980c6.chunk.js.map": "/Meet/static/js/453.4a9980c6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.8d38dbfe.css",
-    "static/js/main.0de747cc.js"
+    "static/js/main.da265191.js"
   ]
 }
