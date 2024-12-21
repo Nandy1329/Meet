@@ -1,6 +1,5 @@
-// src/components/CitySearch.js
-import React from 'react';
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 
 const CitySearch = ({ allLocations, setCurrentCity }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -9,9 +8,11 @@ const CitySearch = ({ allLocations, setCurrentCity }) => {
 
   const handleInputChanged = (event) => {
     const value = event.target.value;
-    const filteredLocations = allLocations ? allLocations.filter((location) => {
-      return location.toUpperCase().indexOf(value.toUpperCase()) > -1;
-    }) : [];
+    const filteredLocations = Array.isArray(allLocations)
+      ? allLocations.filter((location) =>
+        location.toUpperCase().includes(value.toUpperCase())
+      )
+      : [];
 
     setQuery(value);
     setSuggestions(filteredLocations);
@@ -25,7 +26,11 @@ const CitySearch = ({ allLocations, setCurrentCity }) => {
   };
 
   useEffect(() => {
-    setSuggestions(allLocations);
+    if (Array.isArray(allLocations)) {
+      setSuggestions(allLocations);
+    } else {
+      setSuggestions([]);
+    }
   }, [allLocations]);
 
   return (
@@ -38,19 +43,25 @@ const CitySearch = ({ allLocations, setCurrentCity }) => {
         onFocus={() => setShowSuggestions(true)}
         onChange={handleInputChanged}
       />
-      {showSuggestions ?
+      {showSuggestions && (
         <ul className="suggestions">
-          {suggestions.map((suggestion) => {
-            return <li onClick={handleItemClicked} key={suggestion}>{suggestion}</li>
-          })}
-          <li key='See all cities' onClick={handleItemClicked}>
+          {(suggestions || []).map((suggestion) => (
+            <li onClick={handleItemClicked} key={suggestion}>
+              {suggestion}
+            </li>
+          ))}
+          <li key="See all cities" onClick={handleItemClicked}>
             <b>See all cities</b>
           </li>
         </ul>
-        : null
-      }
+      )}
     </div>
-  )
-}
+  );
+};
+
+CitySearch.propTypes = {
+  allLocations: PropTypes.array.isRequired,
+  setCurrentCity: PropTypes.func.isRequired,
+};
 
 export default CitySearch;

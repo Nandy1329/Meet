@@ -20,7 +20,7 @@ const App = () => {
   const fetchData = async () => {
     try {
       const allEvents = await getEvents();
-      if (!allEvents) {
+      if (!Array.isArray(allEvents)) {
         throw new Error('No events found');
       }
       const filteredEvents = currentCity === "See all cities"
@@ -40,10 +40,11 @@ const App = () => {
         allLocations={allLocations}
         setCurrentCity={setCurrentCity} />
       {errorAlert && <div className="error-alert">{errorAlert}</div>} {/* Show error message if there's one */}
-      <EventList events={events} />
       <NumberOfEvents
         currentNOE={currentNOE}
-        setCurrentNOE={setCurrentNOE} />
+        setCurrentNOE={setCurrentNOE}
+        setErrorAlert={setErrorAlert} /> {/* Pass setErrorAlert as a prop */}
+      <EventList events={events} />
     </div>
   );
 };

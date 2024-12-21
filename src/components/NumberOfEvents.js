@@ -7,13 +7,15 @@ const NumberOfEvents = ({ setCurrentNOE, setErrorAlert }) => {
 
   const handleChange = (event) => {
     const value = parseInt(event.target.value, 10);
-    setNumber(value);
     if (isNaN(value) || value <= 0) {
       setErrorAlert('Enter a valid number');
+      setNumber(''); // Set to empty string to avoid NaN
     } else if (value > 32) {
       setErrorAlert('Only a maximum of 32 is allowed');
+      setNumber(''); // Set to empty string to avoid NaN
     } else {
       setErrorAlert('');
+      setNumber(value);
       setCurrentNOE(value);
     }
   };
