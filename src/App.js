@@ -1,49 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import CitySearch from './components/CitySearch';
-import EventList from './components/EventList';
-import NumberOfEvents from './components/NumberOfEvents';
-import { extractLocations, getEvents } from './api';
-import './App.css';
+// src/App.js
+import React, { useState, useEffect } from "react";
+import CitySearch from "./components/CitySearch";
+import EventList from "./components/EventList";
+import NumberOfEvents from "./components/NumberOfEvents";
+import { InfoAlert, ErrorAlert } from "./components/Alert";
+import { extractLocations, getEvents } from "./api";
+import "./App.css";
 
 const App = () => {
   const [events, setEvents] = useState([]);
   const [currentNOE, setCurrentNOE] = useState(32);
   const [allLocations, setAllLocations] = useState([]);
   const [currentCity, setCurrentCity] = useState("See all cities");
+  const [infoAlert, setInfoAlert] = useState("");
   const [errorAlert, setErrorAlert] = useState("");
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentCity, currentNOE]);
+  }, [currentCity, currentNOE]); // Re-fetch when city or number of events changes
 
   const fetchData = async () => {
     try {
       const allEvents = await getEvents();
-      if (!Array.isArray(allEvents)) {
-        throw new Error('No events found');
-      }
-      const filteredEvents = currentCity === "See all cities"
-        ? allEvents
-        : allEvents.filter(event => event.location === currentCity);
+      const filteredEvents =
+        currentCity === "See all cities"
+          ? allEvents
+          : allEvents.filter((event) => event.location === currentCity);
 
       setEvents(filteredEvents.slice(0, currentNOE)); // Slice based on the current number of events
       setAllLocations(extractLocations(allEvents)); // Update locations for CitySearch
     } catch (error) {
-      setErrorAlert('Error fetching events. Please try again later.');
+      setErrorAlert("Error fetching events. Please try again later.");
     }
   };
 
   return (
     <div className="App">
+
       <CitySearch
         allLocations={allLocations}
-        setCurrentCity={setCurrentCity} />
-      {errorAlert && <div className="error-alert">{errorAlert}</div>} {/* Show error message if there's one */}
+        setCurrentCity={setCurrentCity}
+        setInfoAlert={setInfoAlert}
+      />
+
       <NumberOfEvents
-        currentNOE={currentNOE}
         setCurrentNOE={setCurrentNOE}
-        setErrorAlert={setErrorAlert} /> {/* Pass setErrorAlert as a prop */}
+        setErrorAlert={setErrorAlert}
+      />
+
+      <div className="alerts-container">
+        {infoAlert.length ? <InfoAlert text={infoAlert} /> : null}
+        {errorAlert.length ? <ErrorAlert text={errorAlert} /> : null}
+      </div>
+
       <EventList events={events} />
     </div>
   );
