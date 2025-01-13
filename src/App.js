@@ -4,6 +4,7 @@ import CitySearch from "./components/CitySearch";
 import EventList from "./components/EventList";
 import NumberOfEvents from "./components/NumberOfEvents";
 import CityEventsChart from "./components/CityEventsChart";
+import EventGenresChart from "./components/EventGenresChart";
 import { InfoAlert, ErrorAlert, WarningAlert } from "./components/Alert";
 import { extractLocations, getEvents } from "./api";
 import "./App.css";
@@ -25,14 +26,14 @@ const App = () => {
           currentCity === "See all cities"
             ? allEvents
             : allEvents.filter((event) => event.location === currentCity);
-  
+
         setEvents(filteredEvents.slice(0, currentNOE)); // Slice based on the current number of events
         setAllLocations(extractLocations(allEvents)); // Update locations for CitySearch
       } catch (error) {
         setErrorAlert("Error fetching events. Please try again later.");
       }
     };
-  
+
     if (!navigator.onLine) {
       setWarningAlert("You are offline. Events data may be outdated.");
     } else {
@@ -43,24 +44,20 @@ const App = () => {
 
   return (
     <div className="App">
-
-      <CitySearch
-        allLocations={allLocations}
-        setCurrentCity={setCurrentCity}
-        setInfoAlert={setInfoAlert}
-      />
-
-      <NumberOfEvents
-        setCurrentNOE={setCurrentNOE}
-        setErrorAlert={setErrorAlert}
-      />
-
+      <h1>Meet App</h1>
       <div className="alerts-container">
         {infoAlert.length ? <InfoAlert text={infoAlert} /> : null}
         {errorAlert.length ? <ErrorAlert text={errorAlert} /> : null}
         {warningAlert.length ? <WarningAlert text={warningAlert} /> : null}
       </div>
-
+      <CitySearch
+        allLocations={allLocations}
+        setCurrentCity={setCurrentCity}
+        setInfoAlert={setInfoAlert} />
+      <NumberOfEvents
+        setCurrentNOE={setCurrentNOE}
+        setErrorAlert={setErrorAlert}
+      />
       <CityEventsChart allLocations={allLocations} events={events} />
 
       <EventList events={events} />
