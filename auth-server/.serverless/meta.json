@@ -1,0 +1,193 @@
+{
+  "C:\\Users\\nicki\\Meet\\auth-server": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.7",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeResolverProviders": {
+      "default-aws-credential-resolver": "<REDACTED>",
+      "file": {
+        "instance": {
+          "credentials": "<REDACTED>",
+          "serviceConfigFile": {
+            "service": "my-auth-service",
+            "provider": {
+              "name": "aws",
+              "runtime": "nodejs20.x",
+              "region": "us-west-2",
+              "timeout": 30,
+              "environment": {
+                "CLIENT_ID": "1095691643361-lbspl4tbohrn8903ctf16b7kqgp54a4t.apps.googleusercontent.com",
+                "CLIENT_SECRET": "<REDACTED>",
+                "CALENDAR_ID": "fullstackwebdev@careerfoundry.com"
+              },
+              "stage": "dev",
+              "versionFunctions": true
+            },
+            "functions": {
+              "getAuthURL": {
+                "handler": "handler.getAuthURL",
+                "events": [
+                  {
+                    "http": {
+                      "path": "api/get-auth-url",
+                      "method": "get",
+                      "cors": true
+                    }
+                  }
+                ],
+                "name": "my-auth-service-dev-getAuthURL"
+              },
+              "getAccessToken": "<REDACTED>",
+              "getCalendarEvents": {
+                "handler": "handler.getCalendarEvents",
+                "events": [
+                  {
+                    "http": {
+                      "path": "api/get-events/{access_token}",
+                      "method": "get",
+                      "cors": true
+                    }
+                  }
+                ],
+                "name": "my-auth-service-dev-getCalendarEvents"
+              }
+            }
+          },
+          "configFileDirPath": "C:\\Users\\nicki\\Meet\\auth-server",
+          "config": {
+            "type": "file"
+          },
+          "options": {},
+          "stage": "dev",
+          "dashboard": null,
+          "logger": {
+            "namespace": "s:core:resolver:file",
+            "prefix": null,
+            "prefixColor": null
+          },
+          "_credentialsPromise": "<REDACTED>"
+        },
+        "resolvers": {}
+      }
+    },
+    "composeServiceName": null,
+    "servicePath": "C:\\Users\\nicki\\Meet\\auth-server",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "my-auth-service",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs20.x",
+        "region": "us-west-2",
+        "timeout": 30,
+        "environment": {
+          "CLIENT_ID": "1095691643361-lbspl4tbohrn8903ctf16b7kqgp54a4t.apps.googleusercontent.com",
+          "CLIENT_SECRET": "<REDACTED>",
+          "CALENDAR_ID": "fullstackwebdev@careerfoundry.com"
+        },
+        "stage": "dev",
+        "versionFunctions": true
+      },
+      "functions": {
+        "getAuthURL": {
+          "handler": "handler.getAuthURL",
+          "events": [
+            {
+              "http": {
+                "path": "api/get-auth-url",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ],
+          "name": "my-auth-service-dev-getAuthURL"
+        },
+        "getAccessToken": "<REDACTED>",
+        "getCalendarEvents": {
+          "handler": "handler.getCalendarEvents",
+          "events": [
+            {
+              "http": {
+                "path": "api/get-events/{access_token}",
+                "method": "get",
+                "cors": true
+              }
+            }
+          ],
+          "name": "my-auth-service-dev-getCalendarEvents"
+        }
+      }
+    },
+    "serviceRawFile": "service: my-auth-service\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs20.x\r\n  region: us-west-2\r\n  timeout: 30\r\n  environment:\r\n    CLIENT_ID: ${file(config.json):CLIENT_ID}\r\n    CLIENT_SECRET: ${file(config.json):CLIENT_SECRET}\r\n    CALENDAR_ID: ${file(config.json):CALENDAR_ID}\r\n\r\nfunctions:\r\n  getAuthURL:\r\n    handler: handler.getAuthURL\r\n    events:\r\n      - http:\r\n          path: api/get-auth-url\r\n          method: get\r\n          cors: true\r\n\r\n  getAccessToken:\r\n    handler: handler.getAccessToken\r\n    events:\r\n      - http:\r\n          path: api/token/{code}\r\n          method: get\r\n          cors: true\r\n\r\n  getCalendarEvents:\r\n    handler: handler.getCalendarEvents\r\n    events:\r\n      - http:\r\n          path: api/get-events/{access_token}\r\n          method: get\r\n          cors: true\r\n",
+    "command": [
+      "info"
+    ],
+    "options": {},
+    "error": null,
+    "params": {},
+    "machineId": "15027339d75835616b4e9eb748a6c333",
+    "stage": "dev",
+    "accessKeyV2": "<REDACTED>",
+    "accessKeyV1": "<REDACTED>",
+    "orgId": "34f4666c-1e2c-404b-ad61-b176e3ac80fa",
+    "orgName": "nandersen",
+    "userId": "46pMZykgKWvY9vVqVL",
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "userName": "nandersen",
+    "subscription": null,
+    "userEmail": "nickis1329@gmail.com",
+    "serviceProviderAwsRegion": "us-west-2",
+    "serviceProviderAwsCredentials": "<REDACTED>",
+    "serviceProviderAwsAccountId": "051826701012",
+    "projectType": "traditional",
+    "versionSf": "4.4.7",
+    "serviceProviderAwsCfStackName": "my-auth-service-dev",
+    "integrations": {},
+    "serviceUniqueId": "arn:aws:cloudformation:us-west-2:051826701012:stack/my-auth-service-dev/77a48720-8b15-11ef-98e1-02b6a29945ff",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-west-2:051826701012:stack/my-auth-service-dev/77a48720-8b15-11ef-98e1-02b6a29945ff",
+    "serviceProviderAwsCfStackCreated": "2024-10-15T16:49:39.296Z",
+    "serviceProviderAwsCfStackUpdated": "2024-10-28T20:25:17.037Z",
+    "serviceProviderAwsCfStackStatus": "UPDATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "GetAccessTokenLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-west-2:051826701012:function:my-auth-service-dev-getAccessToken:34",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-my-auth-service-dev-GetAccessTokenLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "GetAuthURLLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-west-2:051826701012:function:my-auth-service-dev-getAuthURL:34",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-my-auth-service-dev-GetAuthURLLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "GetCalendarEventsLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-west-2:051826701012:function:my-auth-service-dev-getCalendarEvents:31",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-my-auth-service-dev-GetCalendarEventsLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-my-auth-service-dev-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-west-2-dfa32f5b-188c",
+        "ExportName": "sls-my-auth-service-dev-ServerlessDeploymentBucketName"
+      }
+    ]
+  }
+}
