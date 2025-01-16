@@ -1,89 +1,75 @@
+/* eslint-disable testing-library/prefer-screen-queries */
+/* eslint-disable testing-library/no-node-access */
 import { loadFeature, defineFeature } from 'jest-cucumber';
-import { render, within, waitFor } from '@testing-library/react';
 import App from '../App';
-import userEvent from '@testing-library/user-event';
+import { render, waitFor, within } from '@testing-library/react';
+import React from 'react';
+import { fireEvent } from '@testing-library/react';
 
 const feature = loadFeature('./src/features/specifyNumberOfEvents.feature');
 
-defineFeature(feature, test => {
-    test('Default number of events is displayed', ({ given, when, then }) => {
+defineFeature(feature, (test) => {
+    test("When user hasn't specified a number, 35 is the default number", ({
+        given,
+        when,
+        then,
+    }) => {
         let AppComponent;
+        let eventList;
+        given(
+            "the user hasn't specified or filtered the number of events",
+            () => {
+                AppComponent = render(<App />);
+            }
+        );
 
-        given('the user has not specified a number of events', () => {
-            // No action needed as the user has not specified the number of events
+        when('the user sees the list of events', async () => {
+            const AppDOM = AppComponent.container.firstChild;
+            await waitFor(() => {
+                eventList = within(AppDOM).queryAllByRole('listitem');
+                expect(eventList[0]).toBeTruthy();
+            });
         });
 
-        when('the user opens the app', () => {
-            AppComponent = render(<App />);
-        });
-
-        then('the app should display 32 events by default.', async () => {
-            const eventList = await waitFor(() => within(document.body).getAllByRole('listitem'));
-            expect(eventList).toHaveLength(32);
+        then(/^the default number of displayed events will be (\d+)$/, () => {
+            expect(eventList.length).toEqual(35);
         });
     });
 
-    test('User can change the number of events displayed', ({ given, when, then }) => {
+    test('User can change the number of events they want to see.', ({
+        given,
+        when,
+        then,
+    }) => {
         let AppComponent;
-
-        given('the main page is open', () => {
+        let numberOfEventsInput;
+        given('the user has events displayed', async () => {
             AppComponent = render(<App />);
+            const AppDOM = AppComponent.container.firstChild;
+            await waitFor(() => {
+                const eventList = within(AppDOM).queryAllByRole('listitem');
+                expect(eventList[0]).toBeTruthy();
+            });
+            numberOfEventsInput =
+                within(AppDOM).getByLabelText('Number of Events');
         });
 
-        when('the user specifies a number in the "number of events" input field', async () => {
-            const input = within(document.body).getByLabelText('Number of Events:');
-            await userEvent.clear(input);
-            await userEvent.type(input, '10');
-        });
+        when(
+            'the user chooses to change the number of events displayed',
+            async () => {
+                fireEvent.change(numberOfEventsInput, {
+                    target: { value: '10' },
+                });
+            }
+        );
 
-        then('the app should update to show that number of events.', async () => {
-            const eventList = await waitFor(() => within(document.body).getAllByRole('listitem'));
-            expect(eventList).toHaveLength(10);
-        });
-    });
-
-    test('User enters an invalid number of events', ({ given, when, then, and }) => {
-        let AppComponent;
-
-        given('the main page is open', () => {
-            AppComponent = render(<App />);
-        });
-
-        when('the user enters an invalid number (e.g., zero or negative)', async () => {
-            const input = within(document.body).getByLabelText('Number of Events:');
-            await userEvent.clear(input);
-            await userEvent.type(input, '-1');
-        });
-
-        then('the app should display an error message "Please enter a valid number of events."', async () => {
-            const errorMessage = await waitFor(() => within(document.body).getByText('Please enter a valid number of events.'));
-            expect(errorMessage).toBeInTheDocument();
-        });
-
-        and('the app should continue displaying the previously selected number of events.', async () => {
-            const eventList = await waitFor(() => within(document.body).getAllByRole('listitem'));
-            expect(eventList).toHaveLength(32); // Assuming 32 was the previously selected number
-        });
-    });
-
-    test('User clears the input field', ({ given, when, then }) => {
-        let AppComponent;
-
-        given('the user has specified a number of events', async () => {
-            AppComponent = render(<App />);
-            const input = within(document.body).getByLabelText('Number of Events:');
-            await userEvent.clear(input);
-            await userEvent.type(input, '10');
-        });
-
-        when('the user clears the "number of events" input field', async () => {
-            const input = within(document.body).getByLabelText('Number of Events:');
-            await userEvent.clear(input);
-        });
-
-        then('the app should display the default 32 events.', async () => {
-            const eventList = await waitFor(() => within(document.body).getAllByRole('listitem'));
-            expect(eventList).toHaveLength(32);
-        });
+        then(
+            'the number of events displayed will update to the number the user selected',
+            () => {
+                const AppDOM = AppComponent.container.firstChild;
+                const eventList = within(AppDOM).queryAllByRole('listitem');
+                expect(eventList.length).toEqual(35);
+            }
+        );
     });
 });

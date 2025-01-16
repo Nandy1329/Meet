@@ -1,38 +1,45 @@
-// src/components/Event.js
-import React from "react";
-import { useState } from "react";
-import { formatDate } from "../api";
+import React, { useState } from "react";
+
+// Define the formatDate function
+const formatDate = (dateTime) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateTime).toLocaleDateString(undefined, options);
+};
+
 
 const Event = ({ event }) => {
   const [showDetails, setShowDetails] = useState(false);
 
+
   return (
     <li>
       <div className="event">
-        <h2>{event.summary}</h2>
-        <p><strong>{formatDate(event.start.dateTime)}</strong></p>
-        <p>  {event.location}</p>
-        
-      {showDetails ? (
-        <div className="event-details">
-            {/* <h3>Description</h3> */}
-            <p>
-              {event.description}
-            </p>
+        <h2>{event.summary || "Event Title Not Available"}</h2>
+        <p><strong>{event.start?.dateTime ? formatDate(event.start.dateTime) : "Date not available"}</strong></p>
+        <p>{event.location || "Location not specified"}</p>
+
+        {showDetails && (
+          <div className="event-details">
+            {event.description && (
+              <p>{event.description}</p>
+            )}
             <button className="btn-to-calendar">
-            <a href={event.htmlLink} target="_blank" rel="noopener noreferrer" className="link-to-calendar">
-              See on Google Calendar</a>
+              <a href={event.htmlLink} target="_blank" rel="noopener noreferrer" className="link-to-calendar">
+                See on Google Calendar
+              </a>
             </button>
-            </div>
-      ) : null}
-      <button className="show-details-btn"
-        onClick={() => setShowDetails(!showDetails)}
+          </div>
+        )}
+
+        <button
+          className="show-details-btn"
+          onClick={() => setShowDetails(!showDetails)}
+          aria-expanded={showDetails}
         >
           {showDetails ? "Hide Details" : "Show Details"}
         </button>
-        </div>
+      </div>
     </li>
   );
 };
-
 export default Event;
