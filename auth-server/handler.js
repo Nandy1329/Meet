@@ -10,16 +10,13 @@ const REDIRECT_URI = "https://nandy1329.github.io/Meet/";
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
   CLIENT_SECRET,
-  REDIRECT_URI
+  redirect_uris[0]
 );
 
-console.log("OAuth2 Client setup:", oAuth2Client);
-
-//getAuthURL
 module.exports.getAuthURL = async () => {
   /**
    *
-   * Scopes array is passed to the `scope` option.
+   * Scopes array is passed to the `scope` option. 
    *
    */
   const authUrl = oAuth2Client.generateAuthUrl({
@@ -30,8 +27,8 @@ module.exports.getAuthURL = async () => {
   return {
     statusCode: 200,
     headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
     },
     body: JSON.stringify({
       authUrl,
@@ -39,7 +36,6 @@ module.exports.getAuthURL = async () => {
   };
 };
 
-//getAccessToken
 module.exports.getAccessToken = async (event) => {
   // Decode authorization code extracted from the URL query
   const code = decodeURIComponent(`${event.pathParameters.code}`);
@@ -58,12 +54,12 @@ module.exports.getAccessToken = async (event) => {
     });
   })
     .then((results) => {
-      // Respond with OAuth token
+      // Respond with OAuth token 
       return {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": true,
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify(results),
       };
@@ -72,57 +68,49 @@ module.exports.getAccessToken = async (event) => {
       // Handle error
       return {
         statusCode: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": true,
-        },
         body: JSON.stringify(error),
       };
     });
 };
 
-//getCalendarEvents
 module.exports.getCalendarEvents = async (event) => {
-  const access_token = event.pathParameters.access_token;
-
+  const access_token = decodeURIComponent(`${event.pathParameters.access_token}`);
   oAuth2Client.setCredentials({ access_token });
 
   return new Promise((resolve, reject) => {
     calendar.events.list(
       {
-        calendarId: CALENDAR_ID, // Ensure CALENDAR_ID is defined
+        calendarId: CALENDAR_ID,
         auth: oAuth2Client,
         timeMin: new Date().toISOString(),
         singleEvents: true,
-        orderBy: "startTime", // Corrected parameter name
+        orderBy: "startTime",
       },
       (error, response) => {
         if (error) {
-          reject(error);
+          reject(error); // Reject the promise if there is an error
         } else {
-          resolve(response);
+          resolve(response); // Resolve the promise with the response if no error
         }
       }
     );
   })
     .then((results) => {
+      // Respond with OAuth token
       return {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": true,
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true
         },
         body: JSON.stringify({ events: results.data.items }),
       };
     })
     .catch((error) => {
+      // Handle error
       return {
         statusCode: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": true,
-        },
-        body: JSON.stringify(error),
+        body: JSON.stringify({ error: error.message }),
       };
     });
 };
