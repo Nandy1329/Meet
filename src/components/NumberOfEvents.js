@@ -1,34 +1,28 @@
-import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-const NumberOfEvents = ({ currentNOE, setCurrentNOE, setErrorAlert }) => {
-  const [numberOfEvents, setNumberOfEvents] = useState(currentNOE);
-
-  const handleInputChanged = (event) => {
-    const value = event.target.value;
-
-    if (isNaN(value) || value < 0) {
-      setErrorAlert('Invalid numbers');
-      return;
+const NumberOfEvents = ({ onNumberOfEventsChange, setErrorAlert }) => {
+  const handleButtonClick = (number) => {
+    if (number <= 0 || number > 100) {
+      setErrorAlert("Please enter a valid number of events (between 1 and 100).");
     } else {
-      setErrorAlert('');
-      setCurrentNOE(value);
-      setNumberOfEvents(value);
+      setErrorAlert("");
+      onNumberOfEventsChange(number);
     }
   };
 
   return (
-    <div id="numberOfEvents">
-      <label htmlFor="numberOfEventsInput">Number of Events</label>
-      <input
-        id="numberOfEventsInput"
-        type="text"
-        className="number"
-        placeholder="Enter number of events"
-        onChange={handleInputChanged}
-        value={numberOfEvents}
-      />
+    <div className="events-number-buttons">
+      <button className="number-button" onClick={() => handleButtonClick(5)}>5 events</button>
+      <button className="number-button" onClick={() => handleButtonClick(10)}>10 events</button>
+      <button className="number-button" onClick={() => handleButtonClick(20)}>20 events</button>
+      <button className="number-button" onClick={() => handleButtonClick(32)}>32 events</button>
     </div>
   );
+};
+
+NumberOfEvents.propTypes = {
+  onNumberOfEventsChange: PropTypes.func.isRequired,
+  setErrorAlert: PropTypes.func.isRequired,
 };
 
 export default NumberOfEvents;

@@ -1,12 +1,7 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable testing-library/no-wait-for-multiple-assertions */
-/* eslint-disable testing-library/no-node-access */
 import { defineFeature, loadFeature } from "jest-cucumber";
 import { render, waitFor, within } from "@testing-library/react";
 import App from "../App";
 import userEvent from "@testing-library/user-event";
-import { getEvents } from "../api";
-import Event from "../components/Event";
 
 const feature = loadFeature("./src/features/showHideEventsDetails.feature");
 
@@ -17,7 +12,6 @@ defineFeature(feature, (test) => {
 
     given("user is on the app", async () => {
       AppComponent = render(<App />);
-      // eslint-disable-next-line testing-library/no-node-access
       const AppDOM = AppComponent.container.firstChild;
       EventListDOM = AppDOM.querySelector("#event-list");
       await waitFor(() => {
