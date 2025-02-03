@@ -4,10 +4,8 @@
   "private": true,
   "homepage": "https://nandy1329.github.io/MEET/",
   "dependencies": {
-    "@testing-library/user-event": "^14.5.2",
     "atatus-spa": "^4.6.4",
     "googleapis": "^144.0.0",
-    "node": "^18.20.6",
     "nprogress": "^0.2.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
@@ -59,6 +57,6 @@
     "last 1 safari version"
   ],
   "engines": {
-    "node": "22.x"
+    "node": "18.x"
   }
 }

@@ -89,7 +89,7 @@ export const getEvents = async () => {
   if (token) {
     removeQuery();
     const url =
-      "https://muylbuwi61.execute-api.us-west-2.amazonaws.com//dev/api/get-events" +
+      "https://muylbuwi61.execute-api.us-west-2.amazonaws.com/dev/api/get-events" +
       "/" +
       token;
     const response = await fetch(url);
